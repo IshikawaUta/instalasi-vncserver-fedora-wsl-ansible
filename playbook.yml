@@ -1,0 +1,84 @@
+---
+- name: Setup Remote Desktop Gateway Fedora WSL
+  hosts: wsl
+  become: yes
+  vars_files:
+    - secrets.yml
+
+  vars:
+    cloudflare_token: "{{ vault_cloudflare_token }}"
+    vnc_password: "{{ vault_vnc_password }}"
+    real_user: "{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+    real_home: "/home/{{ ansible_env.SUDO_USER | default(ansible_user_id) }}"
+
+  tasks:
+    - name: Update DNF cache
+      dnf:
+        update_cache: yes
+
+    - name: Install GUI, VNC, and Docker Packages
+      dnf:
+        name: 
+          - "@xfce-desktop-environment"
+          - tigervnc-server
+          - dbus-x11
+          - xset
+          - moby-engine
+          - docker-compose
+        state: present
+
+    - name: Start and Enable Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Create .vnc directory for real user
+      file:
+        path: "{{ real_home }}/.vnc"
+        state: directory
+        owner: "{{ real_user }}"
+        group: "{{ real_user }}"
+        mode: '0755'
+
+    - name: Configure VNC Password
+      shell: |
+        echo "{{ vnc_password }}" | vncpasswd -f > {{ real_home }}/.vnc/passwd
+        chown {{ real_user }}:{{ real_user }} {{ real_home }}/.vnc/passwd
+        chmod 600 {{ real_home }}/.vnc/passwd
+      args:
+        creates: "{{ real_home }}/.vnc/passwd"
+
+    - name: Deploy xstartup script
+      template:
+        src: templates/xstartup.j2
+        dest: "{{ real_home }}/.vnc/xstartup"
+        owner: "{{ real_user }}"
+        group: "{{ real_user }}"
+        mode: '0755'
+
+    - name: Restart VNC Server session
+      become_user: "{{ real_user }}"
+      shell: |
+        vncserver -kill :* 2>/dev/null || true
+        rm -f /tmp/.X*-lock /tmp/.X11-unix/X* || true
+        WAYLAND_DISPLAY= DISPLAY=:5 vncserver :5 -geometry 1366x768 -depth 24
+
+    - name: Setup Docker Gateway Directory
+      file:
+        path: "{{ real_home }}/remote-gateway"
+        state: directory
+        owner: "{{ real_user }}"
+        group: "{{ real_user }}"
+
+    - name: Deploy docker-compose.yml
+      template:
+        src: templates/docker-compose.j2
+        dest: "{{ real_home }}/remote-gateway/docker-compose.yml"
+        owner: "{{ real_user }}"
+        group: "{{ real_user }}"
+
+    - name: Run Docker Stack
+      shell: "docker-compose up -d"
+      args:
+        chdir: "{{ real_home }}/remote-gateway"
