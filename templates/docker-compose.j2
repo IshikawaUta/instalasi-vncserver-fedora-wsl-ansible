@@ -1,0 +1,16 @@
+services:
+  novnc:
+    image: geek1011/easy-novnc:latest
+    container_name: novnc-fedora
+    ports:
+      - "6080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["--addr", "0.0.0.0:8080", "--host", "host.docker.internal", "--port", "5905", "--no-url-password", "--basic-ui"]
+    restart: unless-stopped
+
+  cloudflare-tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflare-tunnel-fedora
+    command: tunnel --no-autoupdate run --token {{ cloudflare_token }}
+    restart: unless-stopped
