@@ -1,0 +1,16 @@
+#!/bin/shx
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+
+export DISPLAY=:5
+export XDG_CURRENT_DESKTOP="XFCE"
+export XDG_SESSION_TYPE=x11
+
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
+    eval $(dbus-launch --sh-syntax --exit-with-session)
+fi
+
+xsetroot -solid grey
+vncconfig -iconic &
+
+exec startxfce4
