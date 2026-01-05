@@ -10,7 +10,9 @@ Sebelum memulai, pastikan Anda berada di distro Fedora WSL dan memiliki hak akse
 Jalankan perintah berikut untuk memasang Ansible di Fedora:
 ```bash
 sudo dnf update -y
-sudo dnf install ansible -y
+sudo dnf install git ansible -y
+git clone https://github.com/IshikawaUta/instalasi-vncserver-fedora-wsl-ansible
+cd instalasi-vncserver-fedora-wsl-ansible
 ```
 
 ---
