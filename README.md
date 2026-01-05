@@ -36,6 +36,20 @@ vault_vnc_password: "masukkan_password_vnc_anda"
 
 ```
 
+## Cara Mendapatkan vault_cloudflare_token
+
+Untuk mendapatkan **vault_cloudflare_token**, ikuti langkah berikut:
+
+1. **Buka Dashboard:** Masuk ke [Cloudflare Zero Trust](https://one.dash.cloudflare.com/).
+2. **Buat Tunnel:** Pergi ke **Networks** > **Tunnels** > **Create a Tunnel**.
+3. **Pilih Cloudflared:** Beri nama tunnel (misal: `fedora-wsl`), lalu klik **Save**.
+4. **Salin Token:** Di bagian "Install and run a connector", pilih environment Docker. Salin kode token panjang yang muncul (setelah teks `--token`).
+5. **Set Up Hostname:** * Klik tab **Public Hostname** pada tunnel yang baru dibuat.
+* Klik **Add a public hostname**.
+* Isi **Subdomain** (misal: `desktop`) dan pilih **Domain** Anda.
+* Pilih **Service Type:** `HTTP` dan **URL:** `novnc:8080`.
+* Klik **Save**.
+
 ---
 
 ## 🚀 Instalasi Proyek
