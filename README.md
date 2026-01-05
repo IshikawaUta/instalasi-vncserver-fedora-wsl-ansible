@@ -47,7 +47,7 @@ Untuk mendapatkan **vault_cloudflare_token**, ikuti langkah berikut:
 5. **Set Up Hostname:** * Klik tab **Public Hostname** pada tunnel yang baru dibuat.
 * Klik **Add a public hostname**.
 * Isi **Subdomain** (misal: `desktop`) dan pilih **Domain** Anda.
-* Pilih **Service Type:** `HTTP` dan **URL:** `novnc:8080`.
+* Pilih **Service Type:** `HTTP` dan **URL:** `novnc-fedora:8080`.
 * Klik **Save**.
 
 ---
