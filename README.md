@@ -69,6 +69,33 @@ ansible-playbook -i inventory.ini playbook.yml -K --ask-vault-pass
 
 ```
 
+### 3. Melihat proses install
+
+Karena tidak ada output dari paket dan ukuran yang diinstall oleh ansible maka untuk melihat apakah instalasi sedang berjalan kita bisa memantau lalu lintas jaringan:
+
+```bash
+grep "eth0" /proc/net/dev
+```
+
+Output dari command diatas:
+
+### Statistik Network Interface (`eth0`)
+
+| Interface | Bagian | Bytes | Packets | Errs | Drop | FIFO | Frame/Colls | Compressed |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **eth0** | **Receive (RX)** | 54,321,010 | 125,430 | 0 | 0 | 0 | 0 | 0 |
+|  | **Transmit (TX)** | 9,876,543 | 85,420 | 0 | 0 | 0 | 0 | 0 |
+
+---
+
+### Penjelasan Singkat Kolom:
+
+* **Receive (RX):** Data yang masuk ke komputer Anda (Download).
+* **Transmit (TX):** Data yang dikirim dari komputer Anda (Upload).
+* **Bytes:** Ukuran total data dalam satuan Byte. (Contoh: 54.321.010 bytes  54.3 MB).
+* **Packets:** Jumlah paket data yang dikirim/terima.
+* **Errs/Drop:** Jika angka ini di atas 0, biasanya menunjukkan adanya gangguan pada jaringan atau kabel.
+
 ---
 
 ## 🛠️ Detail Teknis
